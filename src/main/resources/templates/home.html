@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"> </head>
+<body>
+    <h1>Employees</h1>
+
+<input type="search" id="searchBar" placeholder="Search by ID">
+<body>
+    <script>
+        const searchBar = document.getElementById("searchBar");
+const qrPopupContainer = document.getElementById("qrPopup"); // Assumed ID for popup container
+
+searchBar.addEventListener("input", () => {
+  const id = searchBar.value;
+
+  fetch(`/home?id=${id}`)
+    .then(response => response.blob())
+    .then(blob => {
+      const imageUrl = URL.createObjectURL(blob);
+
+      // Create and display the QR code popup:
+      const qrImage = document.createElement("img");
+      qrImage.src = imageUrl;
+
+      qrPopupContainer.innerHTML = ""; // Clear any previous content
+      qrPopupContainer.appendChild(qrImage);
+      qrPopupContainer.style.display = "block"; // Assuming hidden by default
+    });
+});
+    </script>
+
+<h2>Upload CSV</h2>
+<form method="post" enctype="multipart/form-data" action="/upload">
+    <input type="file" name="file">
+    <button type="submit">Upload</button>
+</form>
+
+<div th:if="${message}" class="alert alert-success">[[${message}]]</div>
+<div th:if="${error}" class="alert alert-danger">[[${error}]]</div>
+
+</body>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>City</th>
+                <th>Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="userInfo : ${userInfoList}">
+                <td th:text="${userInfo.id}"></td>
+                <td th:text="${userInfo.name}"></td>
+                <td th:text="${userInfo.city}"></td>
+                <td th:text="${userInfo.number}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
